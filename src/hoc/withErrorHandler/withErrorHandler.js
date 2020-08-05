@@ -9,28 +9,35 @@ const withErrorHandler = (WrappedComponent, axios) => {
     };
 
     UNSAFE_componentWillMount() {
-        this.reqInterceptor = axios.interceptors.request.use( req => {
-            this.setState({error: null});
-            return req;
-        })
-        this.resInterceptor = axios.interceptors.response.use(res => res, (error) => {
-          this.setState({error: error});
+      this.reqInterceptor = axios.interceptors.request.use((req) => {
+        this.setState({ error: null });
+        return req;
       });
+      this.resInterceptor = axios.interceptors.response.use(
+        (res) => res,
+        (error) => {
+          this.setState({ error: error });
+        }
+      );
     }
-    componentWillUnmount () {
+    componentWillUnmount() {
       // console.log('will Unmount', this.reqInterceptor, this.resInterceptor);
-      
+
       axios.interceptors.request.eject(this.reqInterceptor);
       axios.interceptors.response.eject(this.resInterceptor);
-
     }
     errorConfirmedHandler = () => {
-        this.setState({error: null})
-    }
+      this.setState({ error: null });
+    };
     render() {
       return (
         <Aux>
-          <Modal modalClose={this.errorConfirmedHandler} show={this.state.error}>{this.state.error ? this.state.error.message : null}</Modal>
+          <Modal
+            modalClose={this.errorConfirmedHandler}
+            show={this.state.error}
+          >
+            {this.state.error ? this.state.error.message : null}
+          </Modal>
           <WrappedComponent {...this.props} />
         </Aux>
       );
